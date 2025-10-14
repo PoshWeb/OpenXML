@@ -83,4 +83,23 @@ foreach ($slide in $slidesInOrder) {
       </ScriptProperty>
     </Members>
   </Type>
+  <Type>
+    <Name>OpenXML.PowerPoint.Slide</Name>
+    <Members>
+      <ScriptProperty>
+        <Name>Text</Name>
+        <GetScriptBlock>
+                        @($this.Content | 
+    Select-Xml -XPath '//a:t' -Namespace @{a='http://schemas.openxmlformats.org/drawingml/2006/main'} |
+    Foreach-Object {
+        if ($_.Node.LocalName -eq 't') {
+            $_.Node.InnerText  
+        } else {
+            [Environment]::NewLine
+        }        
+    }) -join ''
+                    </GetScriptBlock>
+      </ScriptProperty>
+    </Members>
+  </Type>
 </Types>
