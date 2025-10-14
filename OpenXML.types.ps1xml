@@ -138,4 +138,24 @@ foreach ($slide in $slidesInOrder) {
       </ScriptProperty>
     </Members>
   </Type>
+  <Type>
+    <Name>OpenXML.Word.File</Name>
+    <Members>
+      <ScriptProperty>
+        <Name>Text</Name>
+        <GetScriptBlock>
+                        @($this.Parts['/word/document.xml'].Content | 
+    Select-Xml -XPath '//w:t|//w:p' -Namespace @{w='http://schemas.openxmlformats.org/wordprocessingml/2006/main'} |
+    Foreach-Object {
+        if ($_.Node.LocalName -eq 't') {
+            $_.Node.InnerText  
+        } else {
+            [Environment]::NewLine
+        }
+        
+    }) -join ''
+                    </GetScriptBlock>
+      </ScriptProperty>
+    </Members>
+  </Type>
 </Types>
