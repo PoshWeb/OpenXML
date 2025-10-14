@@ -1,0 +1,4 @@
+@{
+    DocumentProperties = 'DocumentProperty'
+    DocProps = 'DocumentProperty'
+}
