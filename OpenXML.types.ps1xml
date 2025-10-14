@@ -56,6 +56,28 @@ $excelCells
     </Members>
   </Type>
   <Type>
+    <Name>OpenXML.File</Name>
+    <Members>
+      <MemberSet>
+        <Name>PSStandardMembers</Name>
+        <Members>
+          <PropertySet>
+            <Name>DefaultDisplayPropertySet</Name>
+            <ReferencedProperties>
+              <Name>FilePath</Name>
+              <Name>Parts</Name>
+            </ReferencedProperties>
+          </PropertySet>
+        </Members>
+      </MemberSet>
+      <NoteProperty>
+        <Name>DefaultDisplay</Name>
+        <Value>FilePath
+Parts</Value>
+      </NoteProperty>
+    </Members>
+  </Type>
+  <Type>
     <Name>OpenXML.PowerPoint.File</Name>
     <Members>
       <ScriptProperty>
