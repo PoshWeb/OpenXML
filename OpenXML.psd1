@@ -8,12 +8,13 @@ ModuleVersion = '0.1'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
+Description = 'Automate OpenXML. Excel, Word, and PowerPoint automation in PowerShell.'
 
 # ID used to uniquely identify this module
 GUID = 'ce1bf009-73ae-4293-b57f-a19aaaa793b7'
 
 # Author of this module
-Author = 'JamesBrundage'
+Author = 'James Brundage'
 
 # Company or vendor of this module
 CompanyName = 'Start-Automating'
