@@ -4,16 +4,13 @@ $worksheetsInOrder = @($this.Parts[$this.Parts.keys -match '/sheet\d+'] |
     Sort-Object { $_.Uri -replace '\D' -as [int]} |
     Select-Object)
 
-$worksheetObject = [Ordered]@{
-    PSTypeName = 'OpenXML.Excel.Worksheets'
-}
 $worksheetCounter = 0
 foreach ($worksheet in $worksheetsInOrder) {
     $worksheetName = $worksheetNames[$worksheetCounter]
     if (-not $worksheetName) {
         $worksheetName = "Sheet$($worksheetCounter + 1)"
     }
-    $worksheetObject[$worksheetName] = [PSCustomObject][Ordered]@{
+    [PSCustomObject][Ordered]@{
         PSTypeName = 'OpenXML.Excel.Worksheet'        
         FilePath = $this.FilePath
         Uri = $worksheet.Uri
@@ -24,4 +21,3 @@ foreach ($worksheet in $worksheetsInOrder) {
     }
     $worksheetCounter++
 }
-[PSCustomObject]$worksheetObject
