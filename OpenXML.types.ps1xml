@@ -3,6 +3,26 @@
   <Type>
     <Name>OpenXML</Name>
     <Members>
+      <AliasProperty>
+        <Name>CreatedAt</Name>
+        <ReferencedMemberName>Created</ReferencedMemberName>
+      </AliasProperty>
+      <AliasProperty>
+        <Name>CreationTime</Name>
+        <ReferencedMemberName>Created</ReferencedMemberName>
+      </AliasProperty>
+      <AliasProperty>
+        <Name>LastWriteTime</Name>
+        <ReferencedMemberName>Modified</ReferencedMemberName>
+      </AliasProperty>
+      <AliasProperty>
+        <Name>ModifiedAt</Name>
+        <ReferencedMemberName>Modified</ReferencedMemberName>
+      </AliasProperty>
+      <AliasProperty>
+        <Name>Part</Name>
+        <ReferencedMemberName>Parts</ReferencedMemberName>
+      </AliasProperty>
       <ScriptProperty>
         <Name>Created</Name>
         <GetScriptBlock>
@@ -16,6 +36,20 @@
 #&gt;
 param()
 $this.Parts.'/docProps/core.xml'.content.coreProperties.created.innerText -as [DateTime]
+                    </GetScriptBlock>
+      </ScriptProperty>
+      <ScriptProperty>
+        <Name>Modified</Name>
+        <GetScriptBlock>
+                        &lt;#
+.SYNOPSIS
+    Gets OpenXML modified time
+.DESCRIPTION
+    Gets the time an OpenXML file was modified, according to core document metadata.
+.EXAMPLE
+    Get-OpenXML ./Examples/Blank.docx | Select-Object -ExpandProperty Modified
+#&gt;
+$this.Parts.'/docProps/core.xml'.content.coreProperties.modified.innerText -as [DateTime]
                     </GetScriptBlock>
       </ScriptProperty>
       <ScriptProperty>
