@@ -12,6 +12,14 @@
         <ReferencedMemberName>Created</ReferencedMemberName>
       </AliasProperty>
       <AliasProperty>
+        <Name>DocProps</Name>
+        <ReferencedMemberName>DocumentProperty</ReferencedMemberName>
+      </AliasProperty>
+      <AliasProperty>
+        <Name>DocumentProperties</Name>
+        <ReferencedMemberName>DocumentProperty</ReferencedMemberName>
+      </AliasProperty>
+      <AliasProperty>
         <Name>LastWriteTime</Name>
         <ReferencedMemberName>Modified</ReferencedMemberName>
       </AliasProperty>
@@ -36,6 +44,14 @@
 #&gt;
 param()
 $this.Parts.'/docProps/core.xml'.content.coreProperties.created.innerText -as [DateTime]
+                    </GetScriptBlock>
+      </ScriptProperty>
+      <ScriptProperty>
+        <Name>DocumentProperty</Name>
+        <GetScriptBlock>
+                        if (-not $this.Parts) { return }
+$docProps = $this.Parts[$this.Parts.Keys -match '/docProps/']
+$docProps
                     </GetScriptBlock>
       </ScriptProperty>
       <ScriptProperty>
@@ -268,22 +284,6 @@ $formulaCells
           </PropertySet>
         </Members>
       </MemberSet>
-      <AliasProperty>
-        <Name>DocProps</Name>
-        <ReferencedMemberName>DocumentProperty</ReferencedMemberName>
-      </AliasProperty>
-      <AliasProperty>
-        <Name>DocumentProperties</Name>
-        <ReferencedMemberName>DocumentProperty</ReferencedMemberName>
-      </AliasProperty>
-      <ScriptProperty>
-        <Name>DocumentProperty</Name>
-        <GetScriptBlock>
-                        if (-not $this.Parts) { return }
-$docProps = $this.Parts[$this.Parts.Keys -match '/docProps/']
-$docProps
-                    </GetScriptBlock>
-      </ScriptProperty>
       <NoteProperty>
         <Name>DefaultDisplay</Name>
         <Value>FilePath
