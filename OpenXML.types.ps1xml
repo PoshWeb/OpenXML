@@ -237,6 +237,20 @@ foreach ($worksheetRow in $this.content.worksheet.sheetdata.row) {
 return $excelCells
                     </GetScriptBlock>
       </ScriptProperty>
+      <ScriptProperty>
+        <Name>Formula</Name>
+        <GetScriptBlock>
+                        $formulaCells = [Ordered]@{}
+foreach ($worksheetRow in $this.content.worksheet.sheetdata.row) {
+    foreach ($worksheetColumn in $worksheetRow.c) {
+        if ($worksheetColumn.f) {
+            $formulaCells[$worksheetColumn.r] = $worksheetColumn.f
+        }        
+    }
+}
+$formulaCells
+                    </GetScriptBlock>
+      </ScriptProperty>
     </Members>
   </Type>
   <Type>
