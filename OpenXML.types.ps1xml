@@ -147,6 +147,26 @@ return $this.'.Parts'
   <Type>
     <Name>OpenXML.Excel.File</Name>
     <Members>
+      <AliasProperty>
+        <Name>SharedStrings</Name>
+        <ReferencedMemberName>SharedString</ReferencedMemberName>
+      </AliasProperty>
+      <ScriptProperty>
+        <Name>SharedString</Name>
+        <GetScriptBlock>
+                        &lt;#
+.SYNOPSIS
+    Gets an Excel File's Shared Strings
+.DESCRIPTION
+    Gets an Excel File's Shared Strings.
+
+    In Excel, any cell with text in it really contains an index of it's shared string.
+.EXAMPLE
+    Get-OpenXML ./Examples/HelloWorld.xlsx | Select -Expand SharedString
+#&gt;
+,@($this.Parts.'/xl/sharedStrings.xml'.Content.sst.si.t)
+                    </GetScriptBlock>
+      </ScriptProperty>
       <ScriptProperty>
         <Name>Worksheets</Name>
         <GetScriptBlock>
