@@ -14,12 +14,13 @@ foreach ($worksheet in $worksheetsInOrder) {
         $worksheetName = "Sheet$($worksheetCounter + 1)"
     }
     $worksheetObject[$worksheetName] = [PSCustomObject][Ordered]@{
-        PSTypeName = 'OpenXML.Excel.Worksheet'
+        PSTypeName = 'OpenXML.Excel.Worksheet'        
         FilePath = $this.FilePath
         Uri = $worksheet.Uri
         WorksheetName = $worksheetName
         Content = $worksheet.Content
         ContentType = $worksheet.ContentType
+        OpenXML = $this
     }
     $worksheetCounter++
 }
