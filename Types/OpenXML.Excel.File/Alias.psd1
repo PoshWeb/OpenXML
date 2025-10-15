@@ -1,0 +1,3 @@
+@{
+    SharedStrings = 'SharedString'
+}
