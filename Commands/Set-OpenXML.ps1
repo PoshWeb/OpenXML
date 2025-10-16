@@ -10,6 +10,8 @@ function Set-OpenXML
             Set-OpenXML -Uri '/index.html' -Content ([xml]"<h1>Hello World</h1>") -ContentType text/html |
             Set-OpenXML -Uri '/404.html' -Content ([xml]"<h1>File Not Found</h1>") -ContentType text/html |
             Export-OpenXML ./Examples/Sample2.docx
+    .LINK
+        Get-OpenXML
     #>
     param(
     # The uri to set
@@ -43,6 +45,11 @@ function Set-OpenXML
             return $InputObject
         }
 
+        # If the uri is not prefixed,
+        if ($uri -notmatch '^/') {
+            $uri = "/$uri" # add it to avoid easy errors.
+        }
+
         # Get or create the part
         $part = 
             if ($InputObject.PartExists($uri)) {
@@ -55,8 +62,18 @@ function Set-OpenXML
 
         # Get the stream
         $partStream = $part.GetStream()
+        # First see if the content is a byte[]
+        if ($content -is [byte[]]) {
+            # if so, just write it
+            $partStream.Write($content, 0, $content.Length)
+        }
+        # If the content is a stream,
+        elseif ($content -is [IO.Stream]) {
+            # copy it in.
+            $content.CopyTo($partStream)
+        }
         # If the content was xml or could be,
-        if ($content -is [xml] -or ($contentXml = $content -as [xml])) {            
+        elseif ($content -is [xml] -or ($contentXml = $content -as [xml])) {            
             if ($contentXml) { $content = $contentXml }              
             $buffer = $OutputEncoding.GetBytes($content.OuterXml)
             # write it to the package.
