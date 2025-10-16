@@ -164,11 +164,15 @@ return $this.'.Parts'
     <Name>OpenXML.Excel.File</Name>
     <Members>
       <AliasProperty>
-        <Name>SharedStrings</Name>
-        <ReferencedMemberName>SharedString</ReferencedMemberName>
+        <Name>SharedString</Name>
+        <ReferencedMemberName>SharedStrings</ReferencedMemberName>
+      </AliasProperty>
+      <AliasProperty>
+        <Name>Worksheet</Name>
+        <ReferencedMemberName>Worksheets</ReferencedMemberName>
       </AliasProperty>
       <ScriptProperty>
-        <Name>SharedString</Name>
+        <Name>SharedStrings</Name>
         <GetScriptBlock>
                         &lt;#
 .SYNOPSIS
@@ -216,6 +220,18 @@ foreach ($worksheet in $worksheetsInOrder) {
   <Type>
     <Name>OpenXML.Excel.Worksheet</Name>
     <Members>
+      <AliasProperty>
+        <Name>Cells</Name>
+        <ReferencedMemberName>Cell</ReferencedMemberName>
+      </AliasProperty>
+      <AliasProperty>
+        <Name>Formulae</Name>
+        <ReferencedMemberName>Formula</ReferencedMemberName>
+      </AliasProperty>
+      <AliasProperty>
+        <Name>Formulas</Name>
+        <ReferencedMemberName>Formula</ReferencedMemberName>
+      </AliasProperty>
       <ScriptProperty>
         <Name>Cell</Name>
         <GetScriptBlock>
@@ -294,6 +310,10 @@ Parts</Value>
   <Type>
     <Name>OpenXML.PowerPoint.File</Name>
     <Members>
+      <AliasProperty>
+        <Name>Slide</Name>
+        <ReferencedMemberName>Slides</ReferencedMemberName>
+      </AliasProperty>
       <ScriptProperty>
         <Name>Slides</Name>
         <GetScriptBlock>
