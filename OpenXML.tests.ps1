@@ -15,7 +15,7 @@ describe OpenXML {
     context Excel {
         it 'Can Get Cells' {
             $helloExcel = OpenXML ./Examples/HelloWorld.xlsx
-            $helloExcel.Text -replace '^[\n\r]' | Should -Be 'Hello World'
+            $helloExcel.Worksheets.Cell.Values | Should -Be 'Hello World'
         }        
     }
     context PowerPoint {
