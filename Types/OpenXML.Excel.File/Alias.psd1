@@ -1,3 +1,4 @@
 @{
-    SharedStrings = 'SharedString'
+    SharedString = 'SharedStrings'
+    Worksheet = 'Worksheets'
 }
