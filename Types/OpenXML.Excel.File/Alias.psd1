@@ -1,0 +1,4 @@
+@{
+    SharedString = 'SharedStrings'
+    Worksheet = 'Worksheets'
+}

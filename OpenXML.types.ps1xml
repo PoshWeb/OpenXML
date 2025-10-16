@@ -1,0 +1,395 @@
+<!-- Generated with EZOut 2.0.6: Install-Module EZOut or https://github.com/StartAutomating/EZOut -->
+<Types>
+  <Type>
+    <Name>OpenXML</Name>
+    <Members>
+      <AliasProperty>
+        <Name>CreatedAt</Name>
+        <ReferencedMemberName>Created</ReferencedMemberName>
+      </AliasProperty>
+      <AliasProperty>
+        <Name>CreationTime</Name>
+        <ReferencedMemberName>Created</ReferencedMemberName>
+      </AliasProperty>
+      <AliasProperty>
+        <Name>DocProps</Name>
+        <ReferencedMemberName>DocumentProperty</ReferencedMemberName>
+      </AliasProperty>
+      <AliasProperty>
+        <Name>DocumentProperties</Name>
+        <ReferencedMemberName>DocumentProperty</ReferencedMemberName>
+      </AliasProperty>
+      <AliasProperty>
+        <Name>LastWriteTime</Name>
+        <ReferencedMemberName>Modified</ReferencedMemberName>
+      </AliasProperty>
+      <AliasProperty>
+        <Name>ModifiedAt</Name>
+        <ReferencedMemberName>Modified</ReferencedMemberName>
+      </AliasProperty>
+      <AliasProperty>
+        <Name>Part</Name>
+        <ReferencedMemberName>Parts</ReferencedMemberName>
+      </AliasProperty>
+      <ScriptProperty>
+        <Name>Created</Name>
+        <GetScriptBlock>
+                        &lt;#
+.SYNOPSIS
+    Gets OpenXML creation time
+.DESCRIPTION
+    Gets the time an OpenXML file was created, according to core document metadata.
+.EXAMPLE
+    Get-OpenXML ./Examples/Blank.docx | Select-Object -ExpandProperty Created
+#&gt;
+param()
+$this.Parts.'/docProps/core.xml'.content.coreProperties.created.innerText -as [DateTime]
+                    </GetScriptBlock>
+      </ScriptProperty>
+      <ScriptProperty>
+        <Name>DocumentProperty</Name>
+        <GetScriptBlock>
+                        if (-not $this.Parts) { return }
+$docProps = $this.Parts[$this.Parts.Keys -match '/docProps/']
+$docProps
+                    </GetScriptBlock>
+      </ScriptProperty>
+      <ScriptProperty>
+        <Name>Modified</Name>
+        <GetScriptBlock>
+                        &lt;#
+.SYNOPSIS
+    Gets OpenXML modified time
+.DESCRIPTION
+    Gets the time an OpenXML file was modified, according to core document metadata.
+.EXAMPLE
+    Get-OpenXML ./Examples/Blank.docx | Select-Object -ExpandProperty Modified
+#&gt;
+$this.Parts.'/docProps/core.xml'.content.coreProperties.modified.innerText -as [DateTime]
+                    </GetScriptBlock>
+      </ScriptProperty>
+      <ScriptProperty>
+        <Name>Parts</Name>
+        <GetScriptBlock>
+                        if ($this.'.Parts') {
+    return $this.'.Parts'
+}
+
+
+filter getPartContent {
+    $part = $_            
+    $partStream = $part.GetStream()
+    if (-not $partStream) { return }
+    switch ($part.ContentType) {
+        # If the content type looks like XML, read it as XML
+        { $part.ContentType -match '[\./\+]xml' } {
+            $streamReader = [IO.StreamReader]::new($partStream)                        
+            $streamReader.ReadToEnd() -as [xml]
+            $streamReader.Close()
+            break
+        }
+        # If the part looks like JSON, read it as JSON
+        { $part.Uri -match '\.json$'} {
+            $streamReader = [IO.StreamReader]::new($partStream)
+            $jsonContent = $streamReader.ReadToEnd()
+            $streamReader.Close()
+            $jsonContent | ConvertFrom-Json
+            break
+        }
+        { $part.ContentType -match 'text/.+?$'} {
+            $streamReader = [IO.StreamReader]::new($partStream)
+            $textContent = $streamReader.ReadToEnd()
+            $streamReader.Close()
+            $textContent
+            break
+        }
+        # Otherwise, read it as a memory stream and return the byte array
+        default {
+            $outputStream = [IO.MemoryStream]::new()
+            $partStream.CopyTo($outputStream)
+            $outputStream.Seek(0, 'Begin')
+            $outputStream.ToArray()
+        }
+    }
+    
+    $partStream.Close()
+    $partStream.Dispose()
+}
+
+$packageParts = @($this.GetParts())
+$packageContent = [Ordered]@{}
+
+# Now we will read each part in the package, and store it in an `[Ordered]` dictionary
+# Since this _might_ take a while (if you used a lot of PowerPoint images) we want to show a progress bar.
+
+# Prepare the progress bar
+$partCount = 0
+$partTotal = $packageParts.Length
+$partProgress = [Ordered]@{Id=Get-Random;Activity='Reading Parts'}
+            
+# Then read each part
+@(foreach ($part in $packageParts) {
+    $partCount++
+    # update the progress bar
+    Write-Progress @partProgress -Status "Reading part $($part.Uri) ($partCount of $partTotal)" -PercentComplete (
+        [math]::Round(($partCount * 100/ $partTotal))
+    )
+    # and store the part in the dictionary
+    $packageContent["$($part.Uri)"] = 
+        [PSCustomObject]@{
+            PSTypeName = 'OpenXML.Part'
+            Uri = $part.Uri
+            ContentType = $part.ContentType
+            # (we'll use our helper function to get the content)
+            Content = $part | getPartContent 
+            FilePath = "$resolvedPath"
+        }
+})
+&lt;## Now that we've read all parts, we can close the package
+$filePackage.Close()
+# and the memory stream, too.
+$memoryStream.Close()#&gt;
+
+# and finally, complete the progress bar.
+Write-Progress @partProgress -Status "Completed reading $partCount parts" -Completed
+$this | Add-Member NoteProperty '.Parts' -Force $packageContent
+
+return $this.'.Parts'
+
+                    </GetScriptBlock>
+      </ScriptProperty>
+    </Members>
+  </Type>
+  <Type>
+    <Name>OpenXML.Excel.File</Name>
+    <Members>
+      <AliasProperty>
+        <Name>SharedString</Name>
+        <ReferencedMemberName>SharedStrings</ReferencedMemberName>
+      </AliasProperty>
+      <AliasProperty>
+        <Name>Worksheet</Name>
+        <ReferencedMemberName>Worksheets</ReferencedMemberName>
+      </AliasProperty>
+      <ScriptProperty>
+        <Name>SharedStrings</Name>
+        <GetScriptBlock>
+                        &lt;#
+.SYNOPSIS
+    Gets an Excel File's Shared Strings
+.DESCRIPTION
+    Gets an Excel File's Shared Strings.
+
+    In Excel, any cell with text in it really contains an index of it's shared string.
+.EXAMPLE
+    Get-OpenXML ./Examples/HelloWorld.xlsx | Select -Expand SharedString
+#&gt;
+,@($this.Parts.'/xl/sharedStrings.xml'.Content.sst.si.t)
+                    </GetScriptBlock>
+      </ScriptProperty>
+      <ScriptProperty>
+        <Name>Worksheets</Name>
+        <GetScriptBlock>
+                        $worksheetNames = @($this.Parts['/docProps/app.xml'].Content.Properties.TitlesOfParts.vector.lpstr)
+
+$worksheetsInOrder = @($this.Parts[$this.Parts.keys -match '/sheet\d+'] | 
+    Sort-Object { $_.Uri -replace '\D' -as [int]} |
+    Select-Object)
+
+$worksheetCounter = 0
+foreach ($worksheet in $worksheetsInOrder) {
+    $worksheetName = $worksheetNames[$worksheetCounter]
+    if (-not $worksheetName) {
+        $worksheetName = "Sheet$($worksheetCounter + 1)"
+    }
+    [PSCustomObject][Ordered]@{
+        PSTypeName = 'OpenXML.Excel.Worksheet'        
+        FilePath = $this.FilePath
+        Uri = $worksheet.Uri
+        WorksheetName = $worksheetName
+        Content = $worksheet.Content
+        ContentType = $worksheet.ContentType
+        OpenXML = $this
+    }
+    $worksheetCounter++
+}
+                    </GetScriptBlock>
+      </ScriptProperty>
+    </Members>
+  </Type>
+  <Type>
+    <Name>OpenXML.Excel.Worksheet</Name>
+    <Members>
+      <AliasProperty>
+        <Name>Cells</Name>
+        <ReferencedMemberName>Cell</ReferencedMemberName>
+      </AliasProperty>
+      <AliasProperty>
+        <Name>Formulae</Name>
+        <ReferencedMemberName>Formula</ReferencedMemberName>
+      </AliasProperty>
+      <AliasProperty>
+        <Name>Formulas</Name>
+        <ReferencedMemberName>Formula</ReferencedMemberName>
+      </AliasProperty>
+      <ScriptProperty>
+        <Name>Cell</Name>
+        <GetScriptBlock>
+                        &lt;#
+.SYNOPSIS
+    Gets cells from Excel
+.DESCRIPTION
+    Gets individual cells in an Excel worksheet.
+.EXAMPLE
+    Get-OpenXML ./Examples/Sum.xlsx |
+        Select-Object -ExpandProperty Worksheets |
+        Select-Object -ExpandProperty Cell
+#&gt;
+param()
+$excelCells = [Ordered]@{}
+# Get each row from our sheet data
+foreach ($worksheetRow in $this.content.worksheet.sheetdata.row) {
+    # and get each column from each row
+    foreach ($worksheetColumn in $worksheetRow.c) {
+        # The `r` attribute contains the cell coordinate
+        $excelCells[$worksheetColumn.r] =
+            # Excel cells are always numbers.
+            # If the cell contains a string, it is actually stored as an index in "sharedStrings"
+            if ($worksheetColumn.t -eq 's') {
+                # which makes indexing awfully easy (and has the side-effect of reducing the total file size for worksheets with similar text)
+                $this.OpenXML.SharedStrings[$worksheetColumn.v]
+            } else {
+                # Otherwise, the value should be `v`.
+                $worksheetColumn.v   
+            }
+    }
+}
+
+# Return our cells as dictionary
+return $excelCells
+                    </GetScriptBlock>
+      </ScriptProperty>
+      <ScriptProperty>
+        <Name>Formula</Name>
+        <GetScriptBlock>
+                        $formulaCells = [Ordered]@{}
+foreach ($worksheetRow in $this.content.worksheet.sheetdata.row) {
+    foreach ($worksheetColumn in $worksheetRow.c) {
+        if ($worksheetColumn.f) {
+            $formulaCells[$worksheetColumn.r] = $worksheetColumn.f
+        }        
+    }
+}
+$formulaCells
+                    </GetScriptBlock>
+      </ScriptProperty>
+    </Members>
+  </Type>
+  <Type>
+    <Name>OpenXML.File</Name>
+    <Members>
+      <MemberSet>
+        <Name>PSStandardMembers</Name>
+        <Members>
+          <PropertySet>
+            <Name>DefaultDisplayPropertySet</Name>
+            <ReferencedProperties>
+              <Name>FilePath</Name>
+              <Name>Parts</Name>
+            </ReferencedProperties>
+          </PropertySet>
+        </Members>
+      </MemberSet>
+      <NoteProperty>
+        <Name>DefaultDisplay</Name>
+        <Value>FilePath
+Parts</Value>
+      </NoteProperty>
+    </Members>
+  </Type>
+  <Type>
+    <Name>OpenXML.PowerPoint.File</Name>
+    <Members>
+      <AliasProperty>
+        <Name>Slide</Name>
+        <ReferencedMemberName>Slides</ReferencedMemberName>
+      </AliasProperty>
+      <ScriptProperty>
+        <Name>Slides</Name>
+        <GetScriptBlock>
+                        $slidesInOrder = @($this.Parts[$this.Parts.keys -match '/slide\d+\.xml$'] | 
+    Sort-Object { $_.Uri -replace '\D' -as [int]} |
+    Select-Object)
+
+
+foreach ($slide in $slidesInOrder) {
+    [PSCustomObject][Ordered]@{
+        PSTypeName = 'OpenXML.PowerPoint.Slide'
+        FilePath = $this.FilePath
+        Uri = $slide.Uri
+        SlideNumber = $slide.Uri -replace '\D' -as [int]    
+        Content = $slide.Content
+        ContentType = $slide.ContentType
+    }    
+}
+
+
+
+                    </GetScriptBlock>
+      </ScriptProperty>
+      <ScriptProperty>
+        <Name>Text</Name>
+        <GetScriptBlock>
+                        $this.Slides.Content | 
+    Select-Xml -XPath '//a:t' -Namespace @{a='http://schemas.openxmlformats.org/drawingml/2006/main'} |
+    Foreach-Object {
+        if ($_.Node.LocalName -eq 't') {
+            $_.Node.InnerText  
+        } else {
+            [Environment]::NewLine
+        }        
+    }
+                    </GetScriptBlock>
+      </ScriptProperty>
+    </Members>
+  </Type>
+  <Type>
+    <Name>OpenXML.PowerPoint.Slide</Name>
+    <Members>
+      <ScriptProperty>
+        <Name>Text</Name>
+        <GetScriptBlock>
+                        @($this.Content | 
+    Select-Xml -XPath '//a:t' -Namespace @{a='http://schemas.openxmlformats.org/drawingml/2006/main'} |
+    Foreach-Object {
+        if ($_.Node.LocalName -eq 't') {
+            $_.Node.InnerText  
+        } else {
+            [Environment]::NewLine
+        }        
+    }) -join ''
+                    </GetScriptBlock>
+      </ScriptProperty>
+    </Members>
+  </Type>
+  <Type>
+    <Name>OpenXML.Word.File</Name>
+    <Members>
+      <ScriptProperty>
+        <Name>Text</Name>
+        <GetScriptBlock>
+                        @($this.Parts['/word/document.xml'].Content | 
+    Select-Xml -XPath '//w:t|//w:p' -Namespace @{w='http://schemas.openxmlformats.org/wordprocessingml/2006/main'} |
+    Foreach-Object {
+        if ($_.Node.LocalName -eq 't') {
+            $_.Node.InnerText  
+        } else {
+            [Environment]::NewLine
+        }
+        
+    }) -join ''
+                    </GetScriptBlock>
+      </ScriptProperty>
+    </Members>
+  </Type>
+</Types>
