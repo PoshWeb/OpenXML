@@ -26,6 +26,14 @@ This module is here to help you automate, inspect, and understand OpenXML files.
 
 "## $($ThisModule.Description)"
 
+@"
+<div align='center'>    
+    <a href='https://www.powershellgallery.com/packages/OpenXML/' >
+    <img src='https://img.shields.io/powershellgallery/dt/OpenXML' />
+    </a>
+</div>
+"@
+
 $intro
 
 "### Installing and Importing"

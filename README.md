@@ -1,5 +1,10 @@
 # OpenXML
 ## Automate OpenXML. Excel, Word, and PowerPoint automation in PowerShell.
+<div align='center'>    
+    <a href='https://www.powershellgallery.com/packages/OpenXML/' >
+    <img src='https://img.shields.io/powershellgallery/dt/OpenXML' />
+    </a>
+</div>
 
 OpenXML is the standard used for Office documents.
 

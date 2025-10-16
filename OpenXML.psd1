@@ -42,7 +42,7 @@ PrivateData = @{
     PSData = @{
 
         # Tags applied to this module. These help with module discovery in online galleries.
-        Tags = @('Word','Excel','PowerPoint','OpenXML','Office Open XML','OOXML')
+        Tags = @('Word','Excel','PowerPoint','OpenXML','OfficeOpenXML','OOXML')
 
         # A URL to the license for this module.
         LicenseUri = 'https://github.com/PowerShellWeb/OpenXML/blob/main/LICENSE'

@@ -18,7 +18,7 @@ function Get-OpenXML
     [Alias('OpenXML')]
     param(
     # The path to the OpenXML file to read
-    [Parameter(ValueFromPipelineByPropertyName=$true)]
+    [Parameter(ValueFromPipelineByPropertyName)]
     [Alias('Fullname')]
     [string]
     $FilePath
@@ -46,33 +46,34 @@ function Get-OpenXML
             
             $filePackage.pstypenames.insert(0,'OpenXML')
             $filePackage.pstypenames.insert(0,'OpenXML.File')
-            $packageContent = $filePackage.Parts
             $openXMLObject = $filePackage | 
                 Add-Member NoteProperty FilePath $filePath -Force -PassThru |
                 Add-Member NoteProperty MemoryStream $memoryStream -Force -PassThru
+
+            $packageParts = $filePackage.GetParts()
                                                    
             # Now we can get more specific about what type of OpenXML file this is.
             # By looking for certain key parts, we can determine if this is a PowerPoint, Excel, or Word file.
             # For example, if the package contains a part with `/ppt/` in the URI,
-            if ($filePackage.Parts.Keys -match '/ppt/') {
+            if ($packageParts.Uri -match '^/ppt/') {
                 # it is an `OpenXML.PowerPoint.File`
                 $openXmlObject.pstypenames.insert(0, 'OpenXML.PowerPoint.File')
             }
             
             # If the package contains a part with `/xl/` in the URI,
-            if ($filePackage.Parts.Keys -match '/xl/') {
+            if ($packageParts.Uri -match '^/xl/') {
                 # it is an `OpenXML.Excel.File`
                 $openXmlObject.pstypenames.insert(0, 'OpenXML.Excel.File')
             }
             
             # If the package contains a part with `/word/` in the URI, it is a Word file.
-            if ($filePackage.Parts.Keys -match '/word/') {
+            if ($packageParts.Uri -match '^/word/') {
                 # it is an `OpenXML.Word.File`
                 $openXmlObject.pstypenames.insert(0, 'OpenXML.Word.File')
             }
 
             # If the package contains a part with `/Documents/` in the URI,
-            if ($filePackage.Parts.Keys -match '/Documents/') {
+            if ($packageParts.Uri -match '^Documents/') {
                 # it is an `OpenXML.XPS.File`
                 $openXmlObject.pstypenames.insert(0, 'OpenXML.XPS.File')
             }
