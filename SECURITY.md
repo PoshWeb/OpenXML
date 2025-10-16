@@ -38,6 +38,8 @@ This is far from the first tool to automate OpenXML, and so this threat is not u
 
 It is always important to mind your PII, and this tool will help you locate this information.
 
+To protect a file containing PII from inspection, add a password protection or encrypt the file. 
+
 ### OpenXML Microservers
 
 OpenXML files also contain content type information, which allows them to act as effecient servers.
