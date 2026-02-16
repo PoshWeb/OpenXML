@@ -659,6 +659,20 @@ foreach ($column in $this.tr) {
 }
                     </GetScriptBlock>
       </ScriptProperty>
+      <ScriptProperty>
+        <Name>Text</Name>
+        <GetScriptBlock>
+                        &lt;#
+.SYNOPSIS
+    Gets table row text
+.DESCRIPTION
+    Gets an array containing the text from a table row.
+#&gt;
+return ,@(foreach ($column in $this.tc) {
+    $column.InnerText
+})
+                    </GetScriptBlock>
+      </ScriptProperty>
     </Members>
   </Type>
 </Types>
