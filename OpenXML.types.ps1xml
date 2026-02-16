@@ -488,4 +488,36 @@ if ($documentXml) {
       </ScriptProperty>
     </Members>
   </Type>
+  <Type>
+    <Name>OpenXML.Word.Table</Name>
+    <Members>
+      <ScriptProperty>
+        <Name>Markdown</Name>
+        <GetScriptBlock>
+                        &lt;#
+.SYNOPSIS
+    Gets Word Tables as Markdown
+.DESCRIPTION
+    Gets a Word Table in Markdown
+#&gt;
+
+$isFirst = $true
+@(foreach ($row in $this.tr) {    
+    '|' + (@(        
+        foreach ($column in $row.tc) {
+            $column.InnerText -replace '(?&gt;\r\n|\n)', '&lt;br/&gt;'
+            $columnNumber++
+        }
+        
+    ) -join '|') + '|'
+
+    if ($isFirst) {
+        $isFirst = $false
+        "|" + ("-|" * ($row.tc.Count))
+    }
+}) -join [Environment]::NewLine
+                    </GetScriptBlock>
+      </ScriptProperty>
+    </Members>
+  </Type>
 </Types>
