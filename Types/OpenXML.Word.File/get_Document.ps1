@@ -4,6 +4,9 @@
 .DESCRIPTION
     Gets the `/word/document.xml` within a Word File. 
 #>
+[OutputType([xml])]
+param()
+
 if ($null -ne $this.'#document') { return $this.'#document'}
 
 if (-not $this.PartExists) { return }
@@ -30,6 +33,9 @@ if ($documentXml) {
     )
     $documentXml.psobject.properties.add(
         [psnoteproperty]::new('OpenXML', $this), $false
+    )
+    $documentXml.psobject.properties.add(
+        [psnoteproperty]::new('Part', $documentPart), $false
     )
     $this.psobject.properties.add(
         [psnoteproperty]::new('#document', $documentXml), $false
