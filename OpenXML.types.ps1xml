@@ -512,6 +512,48 @@ if ($documentXml) {
     </Members>
   </Type>
   <Type>
+    <Name>OpenXML.Word.Paragraph</Name>
+    <Members>
+      <ScriptProperty>
+        <Name>Markdown</Name>
+        <GetScriptBlock>
+                        $runs = @($this.r)        
+    
+@(foreach ($run in $runs) {
+    
+    $runText = $run.t
+    if ($runText -isnot [string]) {
+        $runText = $run.t.InnerText
+    }
+
+    if (-not $run.rPr.psobject.properties) {
+        $runText
+    }
+    elseif ($run.rPr.psobject.properties['b'] -and
+        $run.rPr.psobject.properties['i']
+    ) {
+        "***$runText***"
+    }
+    elseif (                
+        $run.rPr.psobject.properties['b']
+    ) {
+        "**$runText**"
+    }
+    elseif (                
+        $run.rPr.psobject.properties['i']
+    ) {
+        "*$runText*"
+    } else  {
+        $runText  
+    } 
+    
+}) -join '' -replace '(?&lt;=\w)(?&gt;\*{6}|\*{4})(?=\w)'
+
+                    </GetScriptBlock>
+      </ScriptProperty>
+    </Members>
+  </Type>
+  <Type>
     <Name>OpenXML.Word.Table</Name>
     <Members>
       <ScriptProperty>
