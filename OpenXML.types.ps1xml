@@ -564,6 +564,13 @@ if ($this.pPr.pStyle -match '\d') {
     <Name>OpenXML.Word.List</Name>
     <Members>
       <ScriptProperty>
+        <Name>Indent</Name>
+        <GetScriptBlock>
+                        $this.pPr.numPr.ilvl.val -as [int]
+
+                    </GetScriptBlock>
+      </ScriptProperty>
+      <ScriptProperty>
         <Name>Markdown</Name>
         <GetScriptBlock>
                         ' ' * (($this.pPr.numPr.ilvl.val -as [int]) * 2) + 
