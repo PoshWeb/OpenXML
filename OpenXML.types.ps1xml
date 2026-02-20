@@ -609,6 +609,13 @@ if ($this.pPr.pStyle -match '\d') {
     )
                     </GetScriptBlock>
       </ScriptProperty>
+      <ScriptProperty>
+        <Name>Number</Name>
+        <GetScriptBlock>
+                        $this.pPr.numPr.ilvl.val -as [int]
+
+                    </GetScriptBlock>
+      </ScriptProperty>
     </Members>
   </Type>
   <Type>
