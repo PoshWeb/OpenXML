@@ -390,6 +390,34 @@ foreach ($slide in $slidesInOrder) {
     </Members>
   </Type>
   <Type>
+    <Name>OpenXML.Word.Code</Name>
+    <Members>
+      <ScriptProperty>
+        <Name>Markdown</Name>
+        <GetScriptBlock>
+                        &lt;#
+.SYNOPSIS
+    Gets Code Markdown
+.DESCRIPTION
+    Gets Word Code blocks as Markdown
+#&gt;
+param()
+@(foreach ($run in $this.r) {
+    $runText = $run.t
+    if ($runText -isnot [string]) {
+        $runText = $run.t.InnerText
+    }
+    '```' + 
+        [Environment]::NewLine + 
+            $runText + 
+        [Environment]::NewLine +
+    '```'
+}) -join '' -replace '`{6}'
+                    </GetScriptBlock>
+      </ScriptProperty>
+    </Members>
+  </Type>
+  <Type>
     <Name>OpenXML.Word.Document</Name>
     <Members>
       <ScriptProperty>
